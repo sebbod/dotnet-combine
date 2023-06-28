@@ -7,54 +7,57 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using System.Linq;
 
-namespace DotnetCombine;
-
-internal static class ConvertNamespaceTransform
+namespace DotnetCombine
 {
-    internal static NamespaceDeclarationSyntax ConvertFileScopedNamespace(FileScopedNamespaceDeclarationSyntax fileScopedNamespace)
+
+    internal static class ConvertNamespaceTransform
     {
-        var namespaceDeclaration = SyntaxFactory.NamespaceDeclaration(
-            fileScopedNamespace.AttributeLists,
-            fileScopedNamespace.Modifiers,
-            fileScopedNamespace.NamespaceKeyword,
-            fileScopedNamespace.Name,
-            SyntaxFactory.Token(SyntaxKind.OpenBraceToken).WithTrailingTrivia(fileScopedNamespace.SemicolonToken.TrailingTrivia),
-            fileScopedNamespace.Externs,
-            fileScopedNamespace.Usings,
-            fileScopedNamespace.Members,
-            SyntaxFactory.Token(SyntaxKind.CloseBraceToken),
-            semicolonToken: default).WithAdditionalAnnotations(Formatter.Annotation);
-
-        // Ensure there is no errant blank line between the open curly and the first body element.
-        var firstBodyToken = namespaceDeclaration.OpenBraceToken.GetNextToken();
-        if (firstBodyToken != namespaceDeclaration.CloseBraceToken &&
-            !firstBodyToken.IsKind(SyntaxKind.EndOfFileToken) &&
-            HasLeadingBlankLine(firstBodyToken, out var firstBodyTokenWithoutBlankLine))
+        internal static NamespaceDeclarationSyntax ConvertFileScopedNamespace(FileScopedNamespaceDeclarationSyntax fileScopedNamespace)
         {
-            namespaceDeclaration = namespaceDeclaration.ReplaceToken(firstBodyToken, firstBodyTokenWithoutBlankLine);
+            var namespaceDeclaration = SyntaxFactory.NamespaceDeclaration(
+                fileScopedNamespace.AttributeLists,
+                fileScopedNamespace.Modifiers,
+                fileScopedNamespace.NamespaceKeyword,
+                fileScopedNamespace.Name,
+                SyntaxFactory.Token(SyntaxKind.OpenBraceToken).WithTrailingTrivia(fileScopedNamespace.SemicolonToken.TrailingTrivia),
+                fileScopedNamespace.Externs,
+                fileScopedNamespace.Usings,
+                fileScopedNamespace.Members,
+                SyntaxFactory.Token(SyntaxKind.CloseBraceToken),
+                semicolonToken: default).WithAdditionalAnnotations(Formatter.Annotation);
+
+            // Ensure there is no errant blank line between the open curly and the first body element.
+            var firstBodyToken = namespaceDeclaration.OpenBraceToken.GetNextToken();
+            if (firstBodyToken != namespaceDeclaration.CloseBraceToken &&
+                !firstBodyToken.IsKind(SyntaxKind.EndOfFileToken) &&
+                HasLeadingBlankLine(firstBodyToken, out var firstBodyTokenWithoutBlankLine))
+            {
+                namespaceDeclaration = namespaceDeclaration.ReplaceToken(firstBodyToken, firstBodyTokenWithoutBlankLine);
+            }
+
+            return namespaceDeclaration;
         }
 
-        return namespaceDeclaration;
-    }
-
-    private static bool HasLeadingBlankLine(SyntaxToken token, out SyntaxToken withoutBlankLine)
-    {
-        var leadingTrivia = token.LeadingTrivia;
-
-        if (leadingTrivia.FirstOrDefault().IsKind(SyntaxKind.EndOfLineTrivia))
+        private static bool HasLeadingBlankLine(SyntaxToken token, out SyntaxToken withoutBlankLine)
         {
-            withoutBlankLine = token.WithLeadingTrivia(leadingTrivia.RemoveAt(0));
-            return true;
-        }
+            var leadingTrivia = token.LeadingTrivia;
 
-        if (leadingTrivia.ElementAtOrDefault(0).IsKind(SyntaxKind.WhitespaceTrivia) && leadingTrivia.ElementAtOrDefault(1).IsKind(SyntaxKind.EndOfLineTrivia))
-        {
-            withoutBlankLine = token.WithLeadingTrivia(leadingTrivia.Skip(2));
-            return true;
-        }
+            if (leadingTrivia.FirstOrDefault().IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                withoutBlankLine = token.WithLeadingTrivia(leadingTrivia.RemoveAt(0));
+                return true;
+            }
 
-        withoutBlankLine = default;
-        return false;
+            if (leadingTrivia.ElementAtOrDefault(0).IsKind(SyntaxKind.WhitespaceTrivia) && leadingTrivia.ElementAtOrDefault(1).IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                withoutBlankLine = token.WithLeadingTrivia(leadingTrivia.Skip(2));
+                return true;
+            }
+
+            withoutBlankLine = default;
+            return false;
+        }
     }
 }

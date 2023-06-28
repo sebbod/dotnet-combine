@@ -1,23 +1,26 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
-namespace DotnetCombine;
-
-[Serializable]
-public class CombineException : Exception
+namespace DotnetCombine
 {
-    public CombineException() : base()
-    {
-    }
 
-    public CombineException(string? message) : base(message)
+    [Serializable]
+    public class CombineException : Exception
     {
-    }
+        public CombineException() : base()
+        {
+        }
 
-    public CombineException(string? message, Exception? innerException) : base(message, innerException)
-    {
-    }
+        public CombineException(string? message) : base(message)
+        {
+        }
 
-    protected CombineException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
+        public CombineException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
+
+        protected CombineException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
     }
 }

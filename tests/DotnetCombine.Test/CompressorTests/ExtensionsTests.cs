@@ -1,38 +1,41 @@
 ﻿using DotnetCombine.Options;
 using DotnetCombine.Services;
+using System.IO;
 using System.IO.Compression;
 using Xunit;
 
-namespace DotnetCombine.Test.CompressorTests;
-
-public class ExtensionsTests : BaseCompressorTests
+namespace DotnetCombine.Test.CompressorTests
 {
-    [Theory]
-    [InlineData("cs")]
-    [InlineData(".cs")]
-    [InlineData("*.cs")]
-    public void SupportedExtensionFormats(string extension)
+
+    public class ExtensionsTests : BaseCompressorTests
     {
-        var outputPath = Path.Combine(DefaultOutputDir, nameof(SupportedExtensionFormats) + Compressor.OutputExtension);
-
-        // Act
-        var options = new ZipOptions()
+        [Theory]
+        [InlineData("cs")]
+        [InlineData(".cs")]
+        [InlineData("*.cs")]
+        public void SupportedExtensionFormats(string extension)
         {
-            Output = outputPath,
-            OverWrite = true,
-            Input = InputDir,
-            Extensions = new[] { extension }
-        };
+            var outputPath = Path.Combine(DefaultOutputDir, nameof(SupportedExtensionFormats) + Compressor.OutputExtension);
 
-        var exitCode = new Compressor(options).Run();
+            // Act
+            var options = new ZipOptions()
+            {
+                Output = outputPath,
+                OverWrite = true,
+                Input = InputDir,
+                Extensions = new[] { extension }
+            };
 
-        // Assert
-        Assert.Equal(0, exitCode);
-        Assert.True(File.Exists(outputPath));
+            var exitCode = new Compressor(options).Run();
 
-        using var fs = new FileStream(outputPath, FileMode.Open);
-        using ZipArchive zip = new(fs, ZipArchiveMode.Read);
+            // Assert
+            Assert.Equal(0, exitCode);
+            Assert.True(File.Exists(outputPath));
 
-        Assert.Equal(TotalCsFiles, zip.Entries.Count);
+            using var fs = new FileStream(outputPath, FileMode.Open);
+            using ZipArchive zip = new(fs, ZipArchiveMode.Read);
+
+            Assert.Equal(TotalCsFiles, zip.Entries.Count);
+        }
     }
 }

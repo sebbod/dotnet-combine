@@ -1,19 +1,28 @@
 ﻿using DotnetCombine.Options;
 using DotnetCombine.Services;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace DotnetCombine.Test.CombinerTests;
-
-public class PreprocessorAtEoFTests : BaseCombinerTests
+namespace DotnetCombine.Test.CombinerTests
 {
-    [Fact]
-    public async Task Endif()
+    public class PreprocessorAtEoFTests : BaseCombinerTests
     {
-        // Arrange
-        var initialCsFile = Path.Combine(DefaultOutputDir, $"{nameof(Endif)}-input" + Combiner.OutputExtension);
-        var outputCsFile = Path.Combine(DefaultOutputDir, $"{nameof(Endif)}-output" + Combiner.OutputExtension);
+        [Fact]
+        public async Task Endif()
+        {
+            // Arrange
+            var initialCsFile = Path.Combine(DefaultOutputDir, $"{nameof(Endif)}-input" + Combiner.OutputExtension);
+            var outputCsFile = Path.Combine(DefaultOutputDir, $"{nameof(Endif)}-output" + Combiner.OutputExtension);
 
-        const string originalContent = @"
+            const string originalContent = @"
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Running;
 using System.Reflection;
@@ -27,25 +36,26 @@ BenchmarkSwitcher.FromAssembly(Assembly.GetExecutingAssembly()).Run(args, new De
 #endif
 ";
 
-        CreateFile(initialCsFile, originalContent);
+            CreateFile(initialCsFile, originalContent);
 
-        // Act
-        var options = new CombineOptions()
-        {
-            Output = outputCsFile,
-            OverWrite = true,
-            Input = initialCsFile
-        };
+            // Act
+            var options = new CombineOptions()
+            {
+                Output = outputCsFile,
+                OverWrite = true,
+                Input = initialCsFile
+            };
 
-        var exitCode = await new Combiner(options).Run();
+            var exitCode = await new Combiner(options).Run();
 
-        // Assert
-        Assert.Equal(0, exitCode);
+            // Assert
+            Assert.Equal(0, exitCode);
 
-        var oldContent = (await File.ReadAllLinesAsync(initialCsFile));
-        var newContent = (await File.ReadAllLinesAsync(outputCsFile)).Where(l => l.Length > 0);
+            var oldContent = (await File.ReadAllLinesAsync(initialCsFile));
+            var newContent = (await File.ReadAllLinesAsync(outputCsFile)).Where(l => l.Length > 0);
 
-        Assert.Equal(oldContent.Last(), newContent.Last());
-        Assert.Contains("#endif", newContent.Last());
+            Assert.Equal(oldContent.Last(), newContent.Last());
+            Assert.Contains("#endif", newContent.Last());
+        }
     }
 }

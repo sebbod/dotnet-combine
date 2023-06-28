@@ -1,49 +1,52 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
+using System.Linq;
 
-namespace DotnetCombine.SyntaxRewriters;
-
-internal class AnnotateNamespacesRewriter : BaseCustomRewriter
+namespace DotnetCombine.SyntaxRewriters
 {
-    public AnnotateNamespacesRewriter(string message) : base(message) { }
 
-    public override SyntaxNode? VisitFileScopedNamespaceDeclaration(FileScopedNamespaceDeclarationSyntax node)
+    internal class AnnotateNamespacesRewriter : BaseCustomRewriter
     {
-        var namespaceDeclaration = ConvertNamespaceTransform.ConvertFileScopedNamespace(node);
-        var nodeWithComment = AddComment(namespaceDeclaration);
+        public AnnotateNamespacesRewriter(string message) : base(message) { }
 
-        return base.VisitNamespaceDeclaration(nodeWithComment);
-    }
-
-    public override SyntaxNode? VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
-    {
-        var nodeWithComment = AddComment(node);
-
-        return base.VisitNamespaceDeclaration(nodeWithComment)!;
-    }
-
-    private T AddComment<T>(T node)
-        where T : BaseNamespaceDeclarationSyntax
-    {
-        SyntaxTrivia TriviaToAdd(SyntaxTriviaList? existingTrivia = null)
+        public override SyntaxNode? VisitFileScopedNamespaceDeclaration(FileScopedNamespaceDeclarationSyntax node)
         {
-            var existingTriviaString = existingTrivia?.ToString();
+            var namespaceDeclaration = ConvertNamespaceTransform.ConvertFileScopedNamespace(node);
+            var nodeWithComment = AddComment(namespaceDeclaration);
 
-            return SyntaxFactory.Comment(
-            $"// {_message}" +
-            $"{(existingTriviaString?.StartsWith(Environment.NewLine) == true   // i.e. false when there's an #if directive at the beinning of the file
-                ? ""
-                : Environment.NewLine)}");
-    }
-
-        if (node.HasLeadingTrivia)
-        {
-            var existingTrivia = node.GetLeadingTrivia();
-
-            return node.WithLeadingTrivia(existingTrivia.Prepend(TriviaToAdd(existingTrivia)));
+            return base.VisitNamespaceDeclaration(nodeWithComment);
         }
 
-        return node.WithLeadingTrivia(TriviaToAdd());
+        public override SyntaxNode? VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
+        {
+            var nodeWithComment = AddComment(node);
+
+            return base.VisitNamespaceDeclaration(nodeWithComment)!;
+        }
+
+        private T AddComment<T>(T node)
+            where T : BaseNamespaceDeclarationSyntax
+        {
+            SyntaxTrivia TriviaToAdd(SyntaxTriviaList? existingTrivia = null)
+            {
+                var str = String.Format($"// {_message}");
+                var existingTriviaString = existingTrivia?.ToString();
+                if (existingTriviaString != null)
+                    str += (existingTriviaString.StartsWith(Environment.NewLine) ? "" : Environment.NewLine);
+
+                return SyntaxFactory.Comment(str);
+            }
+
+            if (node.HasLeadingTrivia)
+            {
+                var existingTrivia = node.GetLeadingTrivia();
+
+                return node.WithLeadingTrivia(existingTrivia.Prepend(TriviaToAdd(existingTrivia)));
+            }
+
+            return node.WithLeadingTrivia(TriviaToAdd());
+        }
     }
 }

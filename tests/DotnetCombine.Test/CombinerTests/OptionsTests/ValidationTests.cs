@@ -1,44 +1,47 @@
 ﻿using DotnetCombine.Options;
 using DotnetCombine.Services;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace DotnetCombine.Test.CombinerTests.OptionsTests;
-
-public class ValidationTests : BaseCombinerTests
+namespace DotnetCombine.Test.CombinerTests.OptionsTests
 {
-    [Fact]
-    public async Task NoInput_ShouldFail()
-    {
-        // Arrange
-        var options = new CombineOptions();
 
-        // Act and assert
-        Assert.Equal(1, await new Combiner(options).Run());
-    }
-
-    [Fact]
-    public async Task NonExistingDirInput_ShouldFail()
+    public class ValidationTests : BaseCombinerTests
     {
-        // Arrange
-        var options = new CombineOptions()
+        [Fact]
+        public async Task NoInput_ShouldFail()
         {
-            Input = "./___non_existing_dir___/"
-        };
+            // Arrange
+            var options = new CombineOptions();
 
-        // Act and assert
-        Assert.Equal(1, await new Combiner(options).Run());
-    }
+            // Act and assert
+            Assert.Equal(1, await new Combiner(options).Run());
+        }
 
-    [Fact]
-    public async Task NonExistingFileInput_ShouldFail()
-    {
-        // Arrange
-        var options = new CombineOptions()
+        [Fact]
+        public async Task NonExistingDirInput_ShouldFail()
         {
-            Input = "./___non_existing_file___"
-        };
+            // Arrange
+            var options = new CombineOptions()
+            {
+                Input = "./___non_existing_dir___/"
+            };
 
-        // Act and assert
-        Assert.Equal(1, await new Combiner(options).Run());
+            // Act and assert
+            Assert.Equal(1, await new Combiner(options).Run());
+        }
+
+        [Fact]
+        public async Task NonExistingFileInput_ShouldFail()
+        {
+            // Arrange
+            var options = new CombineOptions()
+            {
+                Input = "./___non_existing_file___"
+            };
+
+            // Act and assert
+            Assert.Equal(1, await new Combiner(options).Run());
+        }
     }
 }

@@ -1,71 +1,73 @@
 ﻿using DotnetCombine.Options;
 using DotnetCombine.Services;
+using System.IO;
 using System.IO.Compression;
 using Xunit;
 
-namespace DotnetCombine.Test.CompressorTests;
-
-public class OverwriteTests : BaseCompressorTests
+namespace DotnetCombine.Test.CompressorTests
 {
-    [Fact]
-    public void OverWrite_CreatesANewFile()
+    public class OverwriteTests : BaseCompressorTests
     {
-        // Arrange - create a pre-existing 'output' file
-        var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(OverWrite_CreatesANewFile)) + Compressor.OutputExtension;
-        CreateZipFile(expectedZipFile);
-        Assert.True(File.Exists(expectedZipFile));
-
-        // Act
-        var options = new ZipOptions()
+        [Fact]
+        public void OverWrite_CreatesANewFile()
         {
-            OverWrite = true,
-            Input = InputDir,
-            Output = expectedZipFile
-        };
+            // Arrange - create a pre-existing 'output' file
+            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(OverWrite_CreatesANewFile)) + Compressor.OutputExtension;
+            CreateZipFile(expectedZipFile);
+            Assert.True(File.Exists(expectedZipFile));
 
-        var exitCode = new Compressor(options).Run();
+            // Act
+            var options = new ZipOptions()
+            {
+                OverWrite = true,
+                Input = InputDir,
+                Output = expectedZipFile
+            };
 
-        // Assert - final file doesn't include original file's content
-        Assert.Equal(0, exitCode);
-        Assert.True(File.Exists(expectedZipFile));
+            var exitCode = new Compressor(options).Run();
 
-        using var fs = new FileStream(expectedZipFile, FileMode.Open);
-        using ZipArchive zip = new(fs, ZipArchiveMode.Read);
+            // Assert - final file doesn't include original file's content
+            Assert.Equal(0, exitCode);
+            Assert.True(File.Exists(expectedZipFile));
 
-        Assert.NotEmpty(zip.Entries);
-    }
+            using var fs = new FileStream(expectedZipFile, FileMode.Open);
+            using ZipArchive zip = new(fs, ZipArchiveMode.Read);
 
-    [Fact]
-    public void NoOverwrite_ThrowsAnException()
-    {
-        // Arrange - create a pre-existing 'output' file
-        var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(NoOverwrite_ThrowsAnException)) + Compressor.OutputExtension;
-        CreateZipFile(expectedZipFile);
-        Assert.True(File.Exists(expectedZipFile));
+            Assert.NotEmpty(zip.Entries);
+        }
 
-        // Act
-        var options = new ZipOptions()
+        [Fact]
+        public void NoOverwrite_ThrowsAnException()
         {
-            OverWrite = false,
-            Input = InputDir,
-            Output = expectedZipFile
-        };
+            // Arrange - create a pre-existing 'output' file
+            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(NoOverwrite_ThrowsAnException)) + Compressor.OutputExtension;
+            CreateZipFile(expectedZipFile);
+            Assert.True(File.Exists(expectedZipFile));
 
-        var exitCode = new Compressor(options).Run();
+            // Act
+            var options = new ZipOptions()
+            {
+                OverWrite = false,
+                Input = InputDir,
+                Output = expectedZipFile
+            };
 
-        // Assert - final file is initial file
-        Assert.Equal(1, exitCode);
-        Assert.True(File.Exists(expectedZipFile));
+            var exitCode = new Compressor(options).Run();
 
-        using var fs = new FileStream(expectedZipFile, FileMode.Open);
-        using ZipArchive zip = new(fs, ZipArchiveMode.Read);
+            // Assert - final file is initial file
+            Assert.Equal(1, exitCode);
+            Assert.True(File.Exists(expectedZipFile));
 
-        Assert.Empty(zip.Entries);
-    }
+            using var fs = new FileStream(expectedZipFile, FileMode.Open);
+            using ZipArchive zip = new(fs, ZipArchiveMode.Read);
 
-    private static void CreateZipFile(string filePath)
-    {
-        using var fs = new FileStream(filePath, FileMode.OpenOrCreate);
-        using var zip = new ZipArchive(fs, ZipArchiveMode.Create);
+            Assert.Empty(zip.Entries);
+        }
+
+        private static void CreateZipFile(string filePath)
+        {
+            using var fs = new FileStream(filePath, FileMode.OpenOrCreate);
+            using var zip = new ZipArchive(fs, ZipArchiveMode.Create);
+        }
     }
 }

@@ -1,272 +1,276 @@
 ﻿using DotnetCombine.Options;
 using DotnetCombine.Services;
+using System;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using Xunit;
 
-namespace DotnetCombine.Test.CompressorTests;
-
-public class OutputTests : BaseCompressorTests
+namespace DotnetCombine.Test.CompressorTests
 {
-    [Theory]
-    [InlineData("OutPutfilename")]
-    [InlineData("OutPutfilename.rar")]
-    [InlineData("OutPutfilename" + Compressor.OutputExtension)]
-    [InlineData(DefaultOutputDir + "/OutPutfilename")]
-    [InlineData(DefaultOutputDir + "/nonexistingFolder/OutPutfilename")]
-    [InlineData(DefaultOutputDir + "/nonexistingFolder/OutPutfilename" + Compressor.OutputExtension)]
-    public void OutPut(string output)
+    public class OutputTests : BaseCompressorTests
     {
-        // Act
-        var options = new ZipOptions()
+        [Theory]
+        [InlineData("OutPutfilename")]
+        [InlineData("OutPutfilename.rar")]
+        [InlineData("OutPutfilename" + Compressor.OutputExtension)]
+        [InlineData(DefaultOutputDir + "/OutPutfilename")]
+        [InlineData(DefaultOutputDir + "/nonexistingFolder/OutPutfilename")]
+        [InlineData(DefaultOutputDir + "/nonexistingFolder/OutPutfilename" + Compressor.OutputExtension)]
+        public void OutPut(string output)
         {
-            Output = output,
-            OverWrite = true,
-            Input = InputDir
-        };
-
-        var exitCode = new Compressor(options).Run();
-
-        // Assert
-        Assert.Equal(0, exitCode);
-        var path = string.IsNullOrEmpty(Path.GetDirectoryName(output))
-            ? InputDir
-            : Path.GetDirectoryName(output)!;
-        var existingFiles = Directory.GetFiles(path);
-
-        var zipFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == "OutPutfilename" && Path.GetExtension(f) == Compressor.OutputExtension);
-
-        Assert.Single(zipFiles);
-    }
-
-    [Theory]
-    [InlineData(DefaultOutputDir + "/")]
-    [InlineData(DefaultOutputDir + "//")]
-    public void NoOutputFileName_GeneratesUniqueFileName(string outputDir)
-    {
-        // Arrange
-        var timeBefore = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
-
-        // Act
-        var options = new ZipOptions()
-        {
-            Output = outputDir,
-            OverWrite = true,
-            Input = InputDir
-        };
-
-        var exitCode = new Compressor(options).Run();
-
-        // Assert
-        Assert.Equal(0, exitCode);
-        var existingFiles = Directory.GetFiles(outputDir);
-
-        var timeAfter = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
-        var zipFiles = existingFiles.Where(f =>
-        {
-            if (Path.GetExtension(f) == Compressor.OutputExtension)
+            // Act
+            var options = new ZipOptions()
             {
-                var fileDate = ParseDateTimeFromFileName(Path.GetFileNameWithoutExtension(f));
-                return fileDate is not null && fileDate >= timeBefore && fileDate <= timeAfter;
-            }
+                Output = output,
+                OverWrite = true,
+                Input = InputDir
+            };
 
-            return false;
-        });
+            var exitCode = new Compressor(options).Run();
 
-        Assert.Single(zipFiles);
-    }
+            // Assert
+            Assert.Equal(0, exitCode);
+            var path = string.IsNullOrEmpty(Path.GetDirectoryName(output))
+                ? InputDir
+                : Path.GetDirectoryName(output)!;
+            var existingFiles = Directory.GetFiles(path);
 
-    [Theory]
-    [InlineData(nameof(NoOutputDir_UsesInputDirAndOutputFileName), "")]
-    [InlineData(nameof(NoOutputDir_UsesInputDirAndOutputFileName), Compressor.OutputExtension)]
-    public void NoOutputDir_UsesInputDirAndOutputFileName(string fileName, string extension)
-    {
-        // Act
-        var options = new ZipOptions()
+            var zipFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == "OutPutfilename" && Path.GetExtension(f) == Compressor.OutputExtension);
+
+            Assert.Single(zipFiles);
+        }
+
+        [Theory]
+        [InlineData(DefaultOutputDir + "/")]
+        [InlineData(DefaultOutputDir + "//")]
+        public void NoOutputFileName_GeneratesUniqueFileName(string outputDir)
         {
-            Output = fileName + extension,
-            OverWrite = true,
-            Input = InputDir
-        };
+            // Arrange
+            var timeBefore = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
 
-        var exitCode = new Compressor(options).Run();
-
-        // Assert
-        Assert.Equal(0, exitCode);
-        var existingFiles = Directory.GetFiles(InputDir);
-
-        var zipFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == fileName && Path.GetExtension(f) == Compressor.OutputExtension);
-
-        Assert.Single(zipFiles);
-    }
-
-    [Fact]
-    public void NoOutput_UsesInputDirAndGeneratesUniqueFileName()
-    {
-        // Arrange
-        var timeBefore = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
-
-        // Act
-        var options = new ZipOptions()
-        {
-            Output = null,
-            Input = InputDir,
-            OverWrite = true,
-        };
-
-        var exitCode = new Compressor(options).Run();
-
-        // Assert
-        Assert.Equal(0, exitCode);
-        var existingFiles = Directory.GetFiles(InputDir);
-
-        var timeAfter = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
-        var zipFiles = existingFiles.Where(f =>
-        {
-            if (Path.GetExtension(f) == Compressor.OutputExtension)
+            // Act
+            var options = new ZipOptions()
             {
-                var fileDate = ParseDateTimeFromFileName(Path.GetFileNameWithoutExtension(f));
-                return fileDate is not null && fileDate >= timeBefore && fileDate <= timeAfter;
-            }
+                Output = outputDir,
+                OverWrite = true,
+                Input = InputDir
+            };
 
-            return false;
-        });
+            var exitCode = new Compressor(options).Run();
 
-        Assert.Single(zipFiles);
-    }
+            // Assert
+            Assert.Equal(0, exitCode);
+            var existingFiles = Directory.GetFiles(outputDir);
 
-    [Theory]
-    [InlineData(DefaultOutputDir + "/OutputPrefix/")]
-    [InlineData(DefaultOutputDir + "/OutputPrefix/filename")]
-    [InlineData(DefaultOutputDir + "/OutputPrefix/filename" + Compressor.OutputExtension)]
-    public void OutputPrefix(string output)
-    {
-        // Arrange
-        var prefix = $"prefix-{output.Replace("/", "-")}-";
+            var timeAfter = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
+            var zipFiles = existingFiles.Where(f =>
+            {
+                if (Path.GetExtension(f) == Compressor.OutputExtension)
+                {
+                    var fileDate = ParseDateTimeFromFileName(Path.GetFileNameWithoutExtension(f));
+                    return fileDate is not null && fileDate >= timeBefore && fileDate <= timeAfter;
+                }
 
-        // Act
-        var options = new ZipOptions()
+                return false;
+            });
+
+            Assert.Single(zipFiles);
+        }
+
+        [Theory]
+        [InlineData(nameof(NoOutputDir_UsesInputDirAndOutputFileName), "")]
+        [InlineData(nameof(NoOutputDir_UsesInputDirAndOutputFileName), Compressor.OutputExtension)]
+        public void NoOutputDir_UsesInputDirAndOutputFileName(string fileName, string extension)
         {
-            Prefix = prefix,
-            Output = output,
-            Input = InputDir
-        };
+            // Act
+            var options = new ZipOptions()
+            {
+                Output = fileName + extension,
+                OverWrite = true,
+                Input = InputDir
+            };
 
-        var exitCode = new Compressor(options).Run();
+            var exitCode = new Compressor(options).Run();
 
-        // Assert
-        Assert.Equal(0, exitCode);
-        var path = string.IsNullOrEmpty(Path.GetDirectoryName(output))
-            ? InputDir
-            : Path.GetDirectoryName(output)!;
-        var existingFiles = Directory.GetFiles(path);
+            // Assert
+            Assert.Equal(0, exitCode);
+            var existingFiles = Directory.GetFiles(InputDir);
 
-        var zipFiles = existingFiles.Where(f =>
-            Path.GetFileNameWithoutExtension(f).StartsWith(prefix)
-            && Path.GetExtension(f) == Compressor.OutputExtension);
+            var zipFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == fileName && Path.GetExtension(f) == Compressor.OutputExtension);
 
-        Assert.Single(zipFiles);
-    }
+            Assert.Single(zipFiles);
+        }
 
-    [Theory]
-    [InlineData(DefaultOutputDir + "/OutputSuffix/")]
-    [InlineData(DefaultOutputDir + "/OutputSuffix/filename")]
-    [InlineData(DefaultOutputDir + "/OutputSuffix/filename" + Compressor.OutputExtension)]
-    public void OutputSuffix(string output)
-    {
-        // Arrange
-        var suffix = $"-{output.Replace("/", "-")}-suffix";
-
-        // Act
-        var options = new ZipOptions()
+        [Fact]
+        public void NoOutput_UsesInputDirAndGeneratesUniqueFileName()
         {
-            Suffix = suffix,
-            Output = output,
-            OverWrite = true,
-            Input = InputDir
-        };
+            // Arrange
+            var timeBefore = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
 
-        var exitCode = new Compressor(options).Run();
+            // Act
+            var options = new ZipOptions()
+            {
+                Output = null,
+                Input = InputDir,
+                OverWrite = true,
+            };
 
-        // Assert
-        Assert.Equal(0, exitCode);
-        var path = string.IsNullOrEmpty(Path.GetDirectoryName(output))
-            ? InputDir
-            : Path.GetDirectoryName(output)!;
-        var existingFiles = Directory.GetFiles(path);
+            var exitCode = new Compressor(options).Run();
 
-        var zipFiles = existingFiles.Where(f =>
-            Path.GetFileNameWithoutExtension(f).EndsWith(suffix)
-            && Path.GetExtension(f) == Compressor.OutputExtension);
+            // Assert
+            Assert.Equal(0, exitCode);
+            var existingFiles = Directory.GetFiles(InputDir);
 
-        Assert.Single(zipFiles);
-    }
+            var timeAfter = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
+            var zipFiles = existingFiles.Where(f =>
+            {
+                if (Path.GetExtension(f) == Compressor.OutputExtension)
+                {
+                    var fileDate = ParseDateTimeFromFileName(Path.GetFileNameWithoutExtension(f));
+                    return fileDate is not null && fileDate >= timeBefore && fileDate <= timeAfter;
+                }
 
-    [Theory]
-    [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/")]
-    [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/filename")]
-    [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/filename" + Compressor.OutputExtension)]
-    public void OutputPrefixSuffix(string output)
-    {
-        // Arrange
-        var prefix = $"preprefix-{output.Replace("/", "-")}-";
-        var suffix = $"-{output.Replace("/", "-")}-suffixfix";
+                return false;
+            });
 
-        // Act
-        var options = new ZipOptions()
+            Assert.Single(zipFiles);
+        }
+
+        [Theory]
+        [InlineData(DefaultOutputDir + "/OutputPrefix/")]
+        [InlineData(DefaultOutputDir + "/OutputPrefix/filename")]
+        [InlineData(DefaultOutputDir + "/OutputPrefix/filename" + Compressor.OutputExtension)]
+        public void OutputPrefix(string output)
         {
-            Prefix = prefix,
-            Suffix = suffix,
-            Output = output,
-            OverWrite = true,
-            Input = InputDir
-        };
+            // Arrange
+            var prefix = $"prefix-{output.Replace("/", "-")}-";
 
-        var exitCode = new Compressor(options).Run();
+            // Act
+            var options = new ZipOptions()
+            {
+                Prefix = prefix,
+                Output = output,
+                Input = InputDir
+            };
 
-        // Assert
-        Assert.Equal(0, exitCode);
-        var path = string.IsNullOrEmpty(Path.GetDirectoryName(output))
-            ? InputDir
-            : Path.GetDirectoryName(output)!;
-        var existingFiles = Directory.GetFiles(path);
+            var exitCode = new Compressor(options).Run();
 
-        var zipFiles = existingFiles.Where(f =>
-            Path.GetFileNameWithoutExtension(f).StartsWith(prefix)
-            && Path.GetFileNameWithoutExtension(f).EndsWith(suffix)
-            && Path.GetExtension(f) == Compressor.OutputExtension);
+            // Assert
+            Assert.Equal(0, exitCode);
+            var path = string.IsNullOrEmpty(Path.GetDirectoryName(output))
+                ? InputDir
+                : Path.GetDirectoryName(output)!;
+            var existingFiles = Directory.GetFiles(path);
 
-        Assert.Single(zipFiles);
-    }
+            var zipFiles = existingFiles.Where(f =>
+                Path.GetFileNameWithoutExtension(f).StartsWith(prefix)
+                && Path.GetExtension(f) == Compressor.OutputExtension);
 
-    [Fact]
-    public void NoOutputAndInputFile()
-    {
-        // Arrange
-        var options = new ZipOptions()
+            Assert.Single(zipFiles);
+        }
+
+        [Theory]
+        [InlineData(DefaultOutputDir + "/OutputSuffix/")]
+        [InlineData(DefaultOutputDir + "/OutputSuffix/filename")]
+        [InlineData(DefaultOutputDir + "/OutputSuffix/filename" + Compressor.OutputExtension)]
+        public void OutputSuffix(string output)
         {
-            Input = $"{InputDir}/cs1.cs",
-            Prefix = nameof(NoOutputAndInputFile),
-            OverWrite = true,
-        };
+            // Arrange
+            var suffix = $"-{output.Replace("/", "-")}-suffix";
 
-        // Act
-        var exitCode = new Compressor(options).Run();
+            // Act
+            var options = new ZipOptions()
+            {
+                Suffix = suffix,
+                Output = output,
+                OverWrite = true,
+                Input = InputDir
+            };
 
-        // Assert
-        Assert.Equal(0, exitCode);
+            var exitCode = new Compressor(options).Run();
 
-        var existingFiles = Directory.GetFiles(InputDir);
+            // Assert
+            Assert.Equal(0, exitCode);
+            var path = string.IsNullOrEmpty(Path.GetDirectoryName(output))
+                ? InputDir
+                : Path.GetDirectoryName(output)!;
+            var existingFiles = Directory.GetFiles(path);
 
-        var zipFiles = existingFiles.Where(f => Path.GetExtension(f) == Compressor.OutputExtension
-                                            && Path.GetFileNameWithoutExtension(f).Contains(options.Prefix));
+            var zipFiles = existingFiles.Where(f =>
+                Path.GetFileNameWithoutExtension(f).EndsWith(suffix)
+                && Path.GetExtension(f) == Compressor.OutputExtension);
 
-        Assert.NotEmpty(zipFiles);
-    }
+            Assert.Single(zipFiles);
+        }
 
-    private static DateTime? ParseDateTimeFromFileName(string fileName)
-    {
-        return DateTime.TryParseExact(fileName, UniqueIdGenerator.DateFormat, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var date)
-            ? (DateTime?)date
-            : null;
+        [Theory]
+        [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/")]
+        [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/filename")]
+        [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/filename" + Compressor.OutputExtension)]
+        public void OutputPrefixSuffix(string output)
+        {
+            // Arrange
+            var prefix = $"preprefix-{output.Replace("/", "-")}-";
+            var suffix = $"-{output.Replace("/", "-")}-suffixfix";
+
+            // Act
+            var options = new ZipOptions()
+            {
+                Prefix = prefix,
+                Suffix = suffix,
+                Output = output,
+                OverWrite = true,
+                Input = InputDir
+            };
+
+            var exitCode = new Compressor(options).Run();
+
+            // Assert
+            Assert.Equal(0, exitCode);
+            var path = string.IsNullOrEmpty(Path.GetDirectoryName(output))
+                ? InputDir
+                : Path.GetDirectoryName(output)!;
+            var existingFiles = Directory.GetFiles(path);
+
+            var zipFiles = existingFiles.Where(f =>
+                Path.GetFileNameWithoutExtension(f).StartsWith(prefix)
+                && Path.GetFileNameWithoutExtension(f).EndsWith(suffix)
+                && Path.GetExtension(f) == Compressor.OutputExtension);
+
+            Assert.Single(zipFiles);
+        }
+
+        [Fact]
+        public void NoOutputAndInputFile()
+        {
+            // Arrange
+            var options = new ZipOptions()
+            {
+                Input = $"{InputDir}/cs1.cs",
+                Prefix = nameof(NoOutputAndInputFile),
+                OverWrite = true,
+            };
+
+            // Act
+            var exitCode = new Compressor(options).Run();
+
+            // Assert
+            Assert.Equal(0, exitCode);
+
+            var existingFiles = Directory.GetFiles(InputDir);
+
+            var zipFiles = existingFiles.Where(f => Path.GetExtension(f) == Compressor.OutputExtension
+                                                && Path.GetFileNameWithoutExtension(f).Contains(options.Prefix));
+
+            Assert.NotEmpty(zipFiles);
+        }
+
+        private static DateTime? ParseDateTimeFromFileName(string fileName)
+        {
+            return DateTime.TryParseExact(fileName, UniqueIdGenerator.DateFormat, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var date)
+                ? (DateTime?)date
+                : null;
+        }
     }
 }
