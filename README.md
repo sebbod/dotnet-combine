@@ -26,8 +26,46 @@ Once installed, `dotnet-combine --help` should show you the general options:
 ```
 
 ## `dotnet-combine sample to integrate in Visual studio`
-
+[Sorry image in french]
+1 - you want to combine all files in Folder4CG
 ![alt text](https://github.com/sebbod/dotnet-combine/blob/20a041932c797f3331e7d56a2ccf4d6ac36f36a2/images/2023-06-29%2015_54_43-DotnetCombineSolution.png)
+2 - Tools -> External tools
+https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2015_55_52-.png
+3 - Add a new one like "DotnetCombine"
+https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2015_56_23-Outils%20externes.png
+
+For this ^^ sample
+DotnetCombine
+D:\github\dotnet-combine\src\DotnetCombine\bin\Release\net5.0\dotnet-combine.exe
+single-file $(ItemPath) --overwrite --P --output combined.cs
+$(ItemDir)
+
++ check use output windows
++ IMPORTANT for a next step count the index of your external tool here for me it's 5
+
+4 - Tools -> Customize
+https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2015_57_29-.png
+
+5 - Command -> Contextual menu -> Project and solution | Folder
+https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2015_58_12-Personnaliser.png
+
+6 - click add a command
+https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2015_58_22-Personnaliser.png
+
+7 - select Tools in left list
+https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2015_58_37-Ajouter%20une%20commande.png
+
+8 - select your number me it's 5 (see step 3 - external tool index)
+https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2015_58_58-Ajouter%20une%20commande.png
+
+9 - yeah, you can now do that on every Folders in your solution
+https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2015_59_16-.png
+
+10 - result file
+https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2016_00_09-DotnetCombineSolution.png
+
+11 - result lines (yes 3 class1 it's not very usefull)
+https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2016_00_19-DotnetCombineSolution.png
 
 ## `dotnet-combine single-file`
 
