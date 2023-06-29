@@ -19,8 +19,8 @@ namespace DotnetCombine.Test.CombinerTests
         public async Task Endif()
         {
             // Arrange
-            var initialCsFile = Path.Combine(DefaultOutputDir, $"{nameof(Endif)}-input" + Combiner.OutputExtension);
-            var outputCsFile = Path.Combine(DefaultOutputDir, $"{nameof(Endif)}-output" + Combiner.OutputExtension);
+            var initialCsFile = Path.Combine(DefaultOutputDir, $"{nameof(Endif)}-input" + OutputFileManager.CSharpOutputExtension);
+            var outputCsFile = Path.Combine(DefaultOutputDir, $"{nameof(Endif)}-output" + OutputFileManager.CSharpOutputExtension);
 
             const string originalContent = @"
 using BenchmarkDotNet.Configs;

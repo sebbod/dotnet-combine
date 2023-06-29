@@ -13,10 +13,10 @@ namespace DotnetCombine.Test.CompressorTests
         [Theory]
         [InlineData("OutPutfilename")]
         [InlineData("OutPutfilename.rar")]
-        [InlineData("OutPutfilename" + Compressor.OutputExtension)]
+        [InlineData("OutPutfilename" + OutputFileManager.ZipOutputExtension)]
         [InlineData(DefaultOutputDir + "/OutPutfilename")]
         [InlineData(DefaultOutputDir + "/nonexistingFolder/OutPutfilename")]
-        [InlineData(DefaultOutputDir + "/nonexistingFolder/OutPutfilename" + Compressor.OutputExtension)]
+        [InlineData(DefaultOutputDir + "/nonexistingFolder/OutPutfilename" + OutputFileManager.ZipOutputExtension)]
         public void OutPut(string output)
         {
             // Act
@@ -36,7 +36,7 @@ namespace DotnetCombine.Test.CompressorTests
                 : Path.GetDirectoryName(output)!;
             var existingFiles = Directory.GetFiles(path);
 
-            var zipFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == "OutPutfilename" && Path.GetExtension(f) == Compressor.OutputExtension);
+            var zipFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == "OutPutfilename" && Path.GetExtension(f) == OutputFileManager.ZipOutputExtension);
 
             Assert.Single(zipFiles);
         }
@@ -66,7 +66,7 @@ namespace DotnetCombine.Test.CompressorTests
             var timeAfter = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
             var zipFiles = existingFiles.Where(f =>
             {
-                if (Path.GetExtension(f) == Compressor.OutputExtension)
+                if (Path.GetExtension(f) == OutputFileManager.ZipOutputExtension)
                 {
                     var fileDate = ParseDateTimeFromFileName(Path.GetFileNameWithoutExtension(f));
                     return fileDate is not null && fileDate >= timeBefore && fileDate <= timeAfter;
@@ -80,7 +80,7 @@ namespace DotnetCombine.Test.CompressorTests
 
         [Theory]
         [InlineData(nameof(NoOutputDir_UsesInputDirAndOutputFileName), "")]
-        [InlineData(nameof(NoOutputDir_UsesInputDirAndOutputFileName), Compressor.OutputExtension)]
+        [InlineData(nameof(NoOutputDir_UsesInputDirAndOutputFileName), OutputFileManager.ZipOutputExtension)]
         public void NoOutputDir_UsesInputDirAndOutputFileName(string fileName, string extension)
         {
             // Act
@@ -97,7 +97,7 @@ namespace DotnetCombine.Test.CompressorTests
             Assert.Equal(0, exitCode);
             var existingFiles = Directory.GetFiles(InputDir);
 
-            var zipFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == fileName && Path.GetExtension(f) == Compressor.OutputExtension);
+            var zipFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == fileName && Path.GetExtension(f) == OutputFileManager.ZipOutputExtension);
 
             Assert.Single(zipFiles);
         }
@@ -125,7 +125,7 @@ namespace DotnetCombine.Test.CompressorTests
             var timeAfter = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
             var zipFiles = existingFiles.Where(f =>
             {
-                if (Path.GetExtension(f) == Compressor.OutputExtension)
+                if (Path.GetExtension(f) == OutputFileManager.ZipOutputExtension)
                 {
                     var fileDate = ParseDateTimeFromFileName(Path.GetFileNameWithoutExtension(f));
                     return fileDate is not null && fileDate >= timeBefore && fileDate <= timeAfter;
@@ -140,7 +140,7 @@ namespace DotnetCombine.Test.CompressorTests
         [Theory]
         [InlineData(DefaultOutputDir + "/OutputPrefix/")]
         [InlineData(DefaultOutputDir + "/OutputPrefix/filename")]
-        [InlineData(DefaultOutputDir + "/OutputPrefix/filename" + Compressor.OutputExtension)]
+        [InlineData(DefaultOutputDir + "/OutputPrefix/filename" + OutputFileManager.ZipOutputExtension)]
         public void OutputPrefix(string output)
         {
             // Arrange
@@ -165,7 +165,7 @@ namespace DotnetCombine.Test.CompressorTests
 
             var zipFiles = existingFiles.Where(f =>
                 Path.GetFileNameWithoutExtension(f).StartsWith(prefix)
-                && Path.GetExtension(f) == Compressor.OutputExtension);
+                && Path.GetExtension(f) == OutputFileManager.ZipOutputExtension);
 
             Assert.Single(zipFiles);
         }
@@ -173,7 +173,7 @@ namespace DotnetCombine.Test.CompressorTests
         [Theory]
         [InlineData(DefaultOutputDir + "/OutputSuffix/")]
         [InlineData(DefaultOutputDir + "/OutputSuffix/filename")]
-        [InlineData(DefaultOutputDir + "/OutputSuffix/filename" + Compressor.OutputExtension)]
+        [InlineData(DefaultOutputDir + "/OutputSuffix/filename" + OutputFileManager.ZipOutputExtension)]
         public void OutputSuffix(string output)
         {
             // Arrange
@@ -199,7 +199,7 @@ namespace DotnetCombine.Test.CompressorTests
 
             var zipFiles = existingFiles.Where(f =>
                 Path.GetFileNameWithoutExtension(f).EndsWith(suffix)
-                && Path.GetExtension(f) == Compressor.OutputExtension);
+                && Path.GetExtension(f) == OutputFileManager.ZipOutputExtension);
 
             Assert.Single(zipFiles);
         }
@@ -207,7 +207,7 @@ namespace DotnetCombine.Test.CompressorTests
         [Theory]
         [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/")]
         [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/filename")]
-        [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/filename" + Compressor.OutputExtension)]
+        [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/filename" + OutputFileManager.ZipOutputExtension)]
         public void OutputPrefixSuffix(string output)
         {
             // Arrange
@@ -236,7 +236,7 @@ namespace DotnetCombine.Test.CompressorTests
             var zipFiles = existingFiles.Where(f =>
                 Path.GetFileNameWithoutExtension(f).StartsWith(prefix)
                 && Path.GetFileNameWithoutExtension(f).EndsWith(suffix)
-                && Path.GetExtension(f) == Compressor.OutputExtension);
+                && Path.GetExtension(f) == OutputFileManager.ZipOutputExtension);
 
             Assert.Single(zipFiles);
         }
@@ -260,7 +260,7 @@ namespace DotnetCombine.Test.CompressorTests
 
             var existingFiles = Directory.GetFiles(InputDir);
 
-            var zipFiles = existingFiles.Where(f => Path.GetExtension(f) == Compressor.OutputExtension
+            var zipFiles = existingFiles.Where(f => Path.GetExtension(f) == OutputFileManager.ZipOutputExtension
                                                 && Path.GetFileNameWithoutExtension(f).Contains(options.Prefix));
 
             Assert.NotEmpty(zipFiles);

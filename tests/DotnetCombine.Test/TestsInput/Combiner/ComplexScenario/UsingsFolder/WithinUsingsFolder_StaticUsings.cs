@@ -1,13 +1,13 @@
 ﻿using Print = System.Console;
 using static System.Math;
 
-namespace Example.UsingsFolder
+namespace Example.UsingsFolder;
+
+internal class WithinUsingsFolder_StaticUsings
 {
-    internal class WithinUsingsFolder_StaticUsings
+    void FooBar()
     {
-        void FooBar()
-        {
-            Print.WriteLine("hey");
-        }
+        Print.WriteLine("hey");
     }
 }
+

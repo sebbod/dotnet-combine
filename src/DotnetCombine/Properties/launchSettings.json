@@ -2,7 +2,7 @@
   "profiles": {
     "DotnetCombine": {
       "commandName": "Project",
-      "commandLineArgs": "single-file D:\\Dev\\POC\\IA_Fourmis_robots\\IA_Fourmis_robots\\v1 --overwrite --nonamespace --output D:\\Dev\\POC\\IA_Fourmis_robots\\IA_Fourmis_robots\\v1\\combinedFile.cs"
+      "commandLineArgs": "single-file D:\\Dev\\POC\\IA_Fourmis_robots\\IA_Fourmis_robots\\v1 --overwrite --P --output combined.cs"
     },
     "WSL 2": {
       "commandName": "WSL2",

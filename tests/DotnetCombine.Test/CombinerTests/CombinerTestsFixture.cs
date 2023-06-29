@@ -21,7 +21,7 @@ namespace DotnetCombine.Test.CombinerTests
         protected static void CleanInputDir()
         {
             foreach (var file in Directory.GetFiles(InputDir)
-                .Where(f => Path.GetExtension(f) == Combiner.OutputExtension && Path.GetFileName(f).Contains(DefaultSuffix, StringComparison.OrdinalIgnoreCase)))
+                .Where(f => Path.GetExtension(f) == OutputFileManager.CSharpOutputExtension && Path.GetFileName(f).Contains(DefaultSuffix, StringComparison.OrdinalIgnoreCase)))
             {
                 File.Delete(file);
             }

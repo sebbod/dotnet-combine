@@ -23,7 +23,13 @@
 
   <ItemGroup>
     <Compile Remove="TestsInput\**\*.cs" />
+    <Compile Remove="TestsInput\Combiner\ComplexScenario\obj\**" />
     <None Include="TestsInput\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="TestsInput\Combiner\ComplexScenario\obj\**" />
+    <None Remove="TestsInput\Combiner\ComplexScenario\obj\**" />
   </ItemGroup>
 
   <ItemGroup>

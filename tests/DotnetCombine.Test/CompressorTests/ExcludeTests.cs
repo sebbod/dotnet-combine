@@ -13,7 +13,7 @@ namespace DotnetCombine.Test.CompressorTests
         public void ExcludeFile()
         {
             // Arrange
-            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(ExcludeFile)) + Compressor.OutputExtension;
+            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(ExcludeFile)) + OutputFileManager.ZipOutputExtension;
             const string excludedFile = "cs1.cs";
 
             // Act
@@ -43,7 +43,7 @@ namespace DotnetCombine.Test.CompressorTests
         public void ExcludeDir()
         {
             // Arrange
-            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(ExcludeDir)) + Compressor.OutputExtension;
+            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(ExcludeDir)) + OutputFileManager.ZipOutputExtension;
             const string excludedDir = "dir1/";
 
             // Act
@@ -73,7 +73,7 @@ namespace DotnetCombine.Test.CompressorTests
         public void ExcludeFileAndDir()
         {
             // Arrange
-            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(ExcludeFileAndDir), nameof(ExcludeFileAndDir)) + Compressor.OutputExtension;
+            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(ExcludeFileAndDir), nameof(ExcludeFileAndDir)) + OutputFileManager.ZipOutputExtension;
             var excludes = new[] { "cs1.cs", "dir1/" };
 
             // Act

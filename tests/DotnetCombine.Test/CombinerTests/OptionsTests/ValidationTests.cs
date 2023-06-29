@@ -1,5 +1,6 @@
 ﻿using DotnetCombine.Options;
 using DotnetCombine.Services;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -14,8 +15,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
             // Arrange
             var options = new CombineOptions();
 
-            // Act and assert
-            Assert.Equal(1, await new Combiner(options).Run());
+            Assert.ThrowsAsync<ArgumentException>(async () => { await new Combiner(options).Run(); });
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
             };
 
             // Act and assert
-            Assert.Equal(1, await new Combiner(options).Run());
+            Assert.ThrowsAsync<ArgumentException>(async () => { await new Combiner(options).Run(); });
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
             };
 
             // Act and assert
-            Assert.Equal(1, await new Combiner(options).Run());
+            Assert.ThrowsAsync<ArgumentException>(async () => { await new Combiner(options).Run(); });
         }
     }
 }

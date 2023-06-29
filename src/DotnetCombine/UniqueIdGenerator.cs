@@ -8,7 +8,7 @@ namespace DotnetCombine
     {
         public const string DateFormat = "yyyy'-'MM'-'dd'__'HH'_'mm'_'ss";
 
-        public static readonly Regex GeneratedFileNameRegex = new(@".*\d{4}-\d{2}-\d{2}__\d{2}_\d{2}_\d{2}.*\" + Combiner.OutputExtension,
+        public static readonly Regex GeneratedFileNameRegex = new(@".*\d{4}-\d{2}-\d{2}__\d{2}_\d{2}_\d{2}.*\" + OutputFileManager.CSharpOutputExtension,
             RegexOptions.ExplicitCapture | RegexOptions.Compiled);
 
         public static string UniqueId() => DateTime.Now.ToLocalTime().ToString(DateFormat);

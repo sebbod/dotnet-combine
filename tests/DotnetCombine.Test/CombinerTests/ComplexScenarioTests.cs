@@ -22,7 +22,7 @@ namespace DotnetCombine.Test.CombinerTests
         {
             // Arrange
             const string input = "TestsInput/Combiner/ComplexScenario/";
-            _outputPath = Path.Combine("ComplexScenarioTestsOutput", nameof(OutputFileContent) + Combiner.OutputExtension);
+            _outputPath = Path.Combine("ComplexScenarioTestsOutput", nameof(OutputFileContent) + OutputFileManager.CSharpOutputExtension);
 
             var options = new CombineOptions
             {
@@ -46,7 +46,7 @@ namespace DotnetCombine.Test.CombinerTests
         {
             // Arrange
             const string input = "TestsInput/Combiner/ComplexScenario/";
-            _outputPath = Path.Combine("ComplexScenarioTestsOutput", nameof(OutputFileCompilation) + Combiner.OutputExtension);
+            _outputPath = Path.Combine("ComplexScenarioTestsOutput", nameof(OutputFileCompilation) + OutputFileManager.CSharpOutputExtension);
 
             var options = new CombineOptions
             {
@@ -67,7 +67,7 @@ namespace DotnetCombine.Test.CombinerTests
 
         private static void CheckFileContent(string inputPath, string outputPath)
         {
-            var files = Directory.GetFiles(inputPath, $"*{Combiner.OutputExtension}", SearchOption.AllDirectories);
+            var files = Directory.GetFiles(inputPath, $"*{OutputFileManager.CSharpOutputExtension}", SearchOption.AllDirectories);
 
             var sourceLines = files.SelectMany(f => File.ReadAllLines(f));
             var outputFileLines = File.ReadAllLines(outputPath);

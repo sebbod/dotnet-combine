@@ -13,9 +13,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Example.UsingsFolder
+namespace Example.UsingsFolder;
+
+public class WithinUsingsFolder_TopCommentsBlocks
 {
-    public class WithinUsingsFolder_TopCommentsBlocks
-    {
-    }
 }

@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace DotnetCombine.SyntaxRewriters
@@ -31,10 +32,10 @@ namespace DotnetCombine.SyntaxRewriters
         {
             SyntaxTrivia TriviaToAdd(SyntaxTriviaList? existingTrivia = null)
             {
-                var str = String.Format($"// {_message}");
                 var existingTriviaString = existingTrivia?.ToString();
-                if (existingTriviaString != null)
-                    str += (existingTriviaString.StartsWith(Environment.NewLine) ? "" : Environment.NewLine);
+
+                var str = $"// {_message}";
+                str += $"{(existingTriviaString?.StartsWith(Environment.NewLine) == true ? "" : Environment.NewLine)}";
 
                 return SyntaxFactory.Comment(str);
             }

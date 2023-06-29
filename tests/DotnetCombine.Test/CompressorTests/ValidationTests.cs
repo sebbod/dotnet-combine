@@ -1,5 +1,6 @@
 ﻿using DotnetCombine.Options;
 using DotnetCombine.Services;
+using System;
 using Xunit;
 
 namespace DotnetCombine.Test.CompressorTests
@@ -13,7 +14,7 @@ namespace DotnetCombine.Test.CompressorTests
             var options = new ZipOptions();
 
             // Act and assert
-            Assert.Equal(1, new Compressor(options).Run());
+            Assert.Throws<ArgumentException>(() => { new Compressor(options).Run(); });
         }
 
         [Fact]
@@ -26,7 +27,7 @@ namespace DotnetCombine.Test.CompressorTests
             };
 
             // Act and assert
-            Assert.Equal(1, new Compressor(options).Run());
+            Assert.Throws<ArgumentException>(() => { new Compressor(options).Run(); });
         }
 
         [Fact]
@@ -39,7 +40,7 @@ namespace DotnetCombine.Test.CompressorTests
             };
 
             // Act and assert
-            Assert.Equal(1, new Compressor(options).Run());
+            Assert.Throws<ArgumentException>(() => { new Compressor(options).Run(); });
         }
     }
 }

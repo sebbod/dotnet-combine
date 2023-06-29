@@ -15,8 +15,6 @@ using Xunit;
 
 
 
-
-
 // LichessTournamentAggregator/LichessTournamentAggregator/ITournamentAggregator.cs
 namespace LichessTournamentAggregator
 {

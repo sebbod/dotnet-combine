@@ -2,6 +2,7 @@
 using DotnetCombine.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,152 +11,68 @@ using System.Threading.Tasks;
 namespace DotnetCombine.Services
 {
 
-    public class Combiner
+    public class Combiner : OutputFileManager
     {
-        public const string OutputExtension = ".cs";
+        public override string OutputExtension { get { return CSharpOutputExtension; } }
 
-        private readonly CombineOptions _options;
-        private string _outputFilePath = null!;
+        private CombineOptions _options;
+        public override CombineOptions options { get { return _options; } }
+
 
         public Combiner(CombineOptions options)
+            : base(options)
         {
             _options = options;
         }
 
-        public async Task<int> Run()
+        public Task<int> Run()
         {
-#if DEBUG
-            var sw = System.Diagnostics.Stopwatch.StartNew();
-#endif
-            try
+            Func<Task> actions = async () =>
             {
-                ValidateInput();
-
                 var filePaths = FindFilesToInclude();
                 var parsedFiles = await ParseFiles(filePaths);
                 await AggregateFiles(parsedFiles);
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Output file: {_outputFilePath}");
-                return 0;
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(e.Message);
-#if DEBUG
-                Console.WriteLine(e.GetType() + Environment.NewLine + e.StackTrace);
-#endif
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                if (OperatingSystem.IsWindows())
-                {
-                    Console.WriteLine($"If you intended to use '{_outputFilePath}' as output file, " +
-                        "try running `dotnet-combine single-file` from an elevated prompt (using \"Run as Administrator\").");
-                }
-                else
-                {
-                    Console.WriteLine($"If you intended to use '{_outputFilePath}' as output file, " +
-                        "try running `dotnet-combine single-file` as superuser (i.e. using 'sudo').");
-                }
-
-                return 1;
-            }
-            catch (Exception e)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(e.Message);
-#if DEBUG
-                Console.WriteLine(e.GetType() + Environment.NewLine + e.StackTrace);
-#endif
-                return 1;
-            }
-            finally
-            {
-                Console.ResetColor();
-
-#if DEBUG
-                Console.WriteLine($"Total time: {sw.ElapsedMilliseconds}ms");
-#endif
-            }
+            };
+            return base.Run(actions);
         }
 
-        private void ValidateInput()
+        protected override IList<string> FindFilesToInclude()
         {
-            _options.Validate();
-
-            _outputFilePath = GetOutputFilePath();
-
-            if (!_options.OverWrite && File.Exists(_outputFilePath))
+            if (File.Exists(options.Input))
             {
-                throw new CombineException(
-                    $"The file {_outputFilePath} already exists{Environment.NewLine}" +
-                    $"Did you mean to set --overwrite to true?{Environment.NewLine}" +
-                    "You can also leave --output empty to always have a new one generated (and maybe use --prefix or --suffix to identify it).");
-            }
-        }
-
-        private string GetOutputFilePath()
-        {
-            string composeFileName(string fileNameWithoutExtension) =>
-                (_options.Prefix ?? string.Empty) +
-                fileNameWithoutExtension +
-                (_options.Suffix ?? string.Empty) +
-                OutputExtension;
-
-            string fileName = composeFileName(UniqueIdGenerator.UniqueId());
-            string basePath = File.Exists(_options.Input)
-                ? Path.GetDirectoryName(_options.Input) ?? throw new CombineException($"{_options.Input} parent dir not found, try providing an absolute or relative path")
-                : _options.Input!;
-
-            if (_options.Output is not null)
-            {
-                if (Path.EndsInDirectorySeparator(_options.Output))
-                {
-                    basePath = _options.Output.ReplaceEndingDirectorySeparatorWithProperEndingDirectorySeparator();
-                    Directory.CreateDirectory(basePath);
-                }
-                else
-                {
-                    var directoryName = Path.GetDirectoryName(_options.Output);
-
-                    basePath = string.IsNullOrEmpty(directoryName)
-                        ? _options.Input + Path.DirectorySeparatorChar
-                        : Directory.CreateDirectory(directoryName).FullName;
-
-                    fileName = composeFileName(Path.GetFileNameWithoutExtension(_options.Output));
-                }
+                return new List<string> { options.Input };
             }
 
-            return Path.Combine(basePath, fileName);
-        }
-
-        private ICollection<string> FindFilesToInclude()
-        {
-            if (File.Exists(_options.Input))
-            {
-                return new List<string> { _options.Input };
-            }
-
-            var filesToExclude = _options.ExcludedItems
+            var filesToExclude = options.ExcludedItems
                 .Where(item => !Path.EndsInDirectorySeparator(item))
                 .ToList();
 
-            filesToExclude.Add(Path.GetFileName(_outputFilePath));
+            filesToExclude.Add(Path.GetFileName(outputFilePath));
 
-            var dirsToExclude = _options.ExcludedItems
+            var dirsToExclude = options.ExcludedItems
                 .Except(filesToExclude)
                 .Select(dir => Path.DirectorySeparatorChar + dir.ReplaceEndingDirectorySeparatorWithProperEndingDirectorySeparator());
 
-            return Directory.GetFiles(_options.Input, $"*{OutputExtension}", SearchOption.AllDirectories)
+            var result = Directory.GetFiles(options.Input, $"*{OutputExtension}", SearchOption.AllDirectories)
                 .Where(filePath =>
                     dirsToExclude?.Any(exclusion =>
                         $"{Path.GetDirectoryName(filePath)}{Path.DirectorySeparatorChar}"?.Contains(exclusion, StringComparison.OrdinalIgnoreCase) == true)
                         == false
-                    && filesToExclude?.Any(exclusion => string.Equals(Path.GetFileName(filePath), exclusion, StringComparison.OrdinalIgnoreCase))
+                    && filesToExclude?.Any(exclusion => string
+                    .Equals(Path.GetFileName(filePath), exclusion, StringComparison.OrdinalIgnoreCase))
                         == false
-                && !UniqueIdGenerator.GeneratedFileNameRegex.IsMatch(Path.GetFileName(filePath)))
-                .OrderBy(s => s)
-                .ToList();
+                && !UniqueIdGenerator.GeneratedFileNameRegex.IsMatch(Path.GetFileName(filePath)));
+
+            if (options.PrefixWithParentFolder)
+            {
+                // exclure les fichiers qui commence par le nom du dossier qui les contients + "_"
+                // cas de dossiers dans des dossiers
+                result = result.Where(filePath => !Path.GetFileName(filePath)
+                        .StartsWith(new DirectoryInfo($"{Path.GetDirectoryName(filePath)}".ReplaceEndingDirectorySeparatorWithProperEndingDirectorySeparator()).Name + "_"));
+            }
+
+            return result.OrderBy(s => s)
+                        .ToList();
         }
 
         private async Task<ICollection<SourceFile>> ParseFiles(IEnumerable<string> filePaths)
@@ -163,10 +80,9 @@ namespace DotnetCombine.Services
             var tasks = filePaths.Select(async filePath =>
             {
                 var parsedFile = new SourceFile(filePath);
-                await parsedFile.Parse(_options);
+                await parsedFile.Parse(options);
                 return parsedFile;
             });
-
             return (await Task.WhenAll(tasks)).ToList();
         }
 
@@ -182,7 +98,7 @@ namespace DotnetCombine.Services
             {
                 var parsedFile = orderedFiles[i];
 
-                if (_options.Verbose)
+                if (options.Verbose)
                 {
                     Console.WriteLine($"\t* [{i + 1}/{orderedFiles.Count}] Aggregating {parsedFile.Filepath}");
                 }
@@ -193,7 +109,7 @@ namespace DotnetCombine.Services
                 codeSection.Append(Environment.NewLine);
             }
 
-            using var fs = new FileStream(_outputFilePath, _options.OverWrite ? FileMode.Create : FileMode.CreateNew);
+            using var fs = new FileStream(outputFilePath, options.OverWrite ? FileMode.Create : FileMode.CreateNew);
             using var sw = new StreamWriter(fs);
 
 #if DEBUG
@@ -204,6 +120,7 @@ namespace DotnetCombine.Services
             //await sw.WriteAsync(Environment.NewLine);
             //await sw.WriteAsync(Environment.NewLine);
             await sw.WriteAsync(codeSection);
+
         }
     }
 }

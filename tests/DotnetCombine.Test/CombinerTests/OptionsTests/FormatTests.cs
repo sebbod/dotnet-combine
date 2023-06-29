@@ -13,7 +13,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         public async Task Format_Indents()
         {
             // Arrange - create a pre-existing 'output' file
-            var initialCsFile = Path.Combine(DefaultOutputDir, nameof(Format_Indents)) + Combiner.OutputExtension;
+            var initialCsFile = Path.Combine(DefaultOutputDir, nameof(Format_Indents)) + OutputFileManager.CSharpOutputExtension;
 
             // Act
             var options = new CombineOptions()
@@ -39,7 +39,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         public async Task NoFormat_NoIndents()
         {
             // Arrange - create a pre-existing 'output' file
-            var initialCsFile = Path.Combine(DefaultOutputDir, nameof(Format_Indents)) + Combiner.OutputExtension;
+            var initialCsFile = Path.Combine(DefaultOutputDir, nameof(Format_Indents)) + OutputFileManager.CSharpOutputExtension;
 
             // Act
             var options = new CombineOptions()

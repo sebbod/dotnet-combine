@@ -1,10 +1,9 @@
-﻿namespace WithinUsingsFolder_NoUsings
+﻿namespace WithinUsingsFolder_NoUsings;
+
+internal class WithinUsingsFolder_NoUsingsClass
 {
-    internal class WithinUsingsFolder_NoUsingsClass
+    void FooBar()
     {
-        void FooBar()
-        {
-            System.Console.WriteLine("hey");
-        }
+        System.Console.WriteLine("hey");
     }
 }

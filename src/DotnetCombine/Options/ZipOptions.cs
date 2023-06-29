@@ -7,7 +7,7 @@ namespace DotnetCombine.Options
 {
 
     [Verb("zip", isDefault: false, HelpText = "Zips multiple files.")]
-    public class ZipOptions
+    public class ZipOptions: ICombineOptions
     {
         [Value(0, MetaName = "input", Required = true, HelpText = @"
 Input path (file or dir).")]
@@ -30,6 +30,10 @@ Overwrites the output file (if it exists).")]
         [Option(longName: "exclude", Required = false, Separator = ';', Default = new[] { "bin/", "obj/" }, HelpText = @"
 Excluded files and directories, separated by semicolons (;).")]
         public IEnumerable<string> ExcludedItems { get; set; } = new[] { "bin/", "obj/" };
+
+        [Option(shortName: 'P', longName: "prefixWithParentFolder", Required = false, Default = true, HelpText = @"
+Prefix with the folder name for the output file.")]
+        public bool PrefixWithParentFolder { get; set; }
 
         [Option(shortName: 'p', longName: "prefix", Required = false, HelpText = @"
 Prefix for the output file.")]
