@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DotnetCombine.Services
 {
-    public abstract class OutputFileManager
+    public abstract class OutputFileBase
     {
         #region OutputExtension
         public const string CSharpOutputExtension = ".cs";
@@ -19,8 +19,8 @@ namespace DotnetCombine.Services
 
         public abstract string OutputExtension { get; }
 
-        private ICombineOptions _options;
-        public abstract ICombineOptions options { get; }
+        private IOutputFileOptions _options;
+        public abstract IOutputFileOptions options { get; }
 
         public string fileName { get; private set; } = null!;
 
@@ -29,7 +29,7 @@ namespace DotnetCombine.Services
         public string outputFilePath { get; private set; } = null!;
 
 
-        public OutputFileManager(ICombineOptions options)
+        public OutputFileBase(IOutputFileOptions options)
         {
             this._options = options;
             ValidateInputAndGenerateMetaData();

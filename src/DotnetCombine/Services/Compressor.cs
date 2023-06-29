@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DotnetCombine.Services
 {
 
-    public class Compressor : OutputFileManager
+    public class Compressor : OutputFileBase
     {
         public override string OutputExtension { get { return ZipOutputExtension; } }
 

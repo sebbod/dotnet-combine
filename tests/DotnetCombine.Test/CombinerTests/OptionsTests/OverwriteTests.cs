@@ -12,7 +12,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         public async Task OverWrite_CreatesANewFile()
         {
             // Arrange - create a pre-existing 'output' file
-            var initialCsFile = Path.Combine(DefaultOutputDir, nameof(OverWrite_CreatesANewFile)) + OutputFileManager.CSharpOutputExtension;
+            var initialCsFile = Path.Combine(DefaultOutputDir, nameof(OverWrite_CreatesANewFile)) + OutputFileBase.CSharpOutputExtension;
 
             const string originalContent = "6c3ffcd4-0157-40be-90df-2705ff75699a";
             CreateFile(initialCsFile, originalContent);
@@ -41,7 +41,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         public async Task NoOverwrite_ThrowsAnException()
         {
             // Arrange - create a pre-existing 'output' file
-            var initialCsFile = Path.Combine(DefaultOutputDir, nameof(NoOverwrite_ThrowsAnException)) + OutputFileManager.CSharpOutputExtension;
+            var initialCsFile = Path.Combine(DefaultOutputDir, nameof(NoOverwrite_ThrowsAnException)) + OutputFileBase.CSharpOutputExtension;
 
             CreateFile(initialCsFile);
             Assert.True(File.Exists(initialCsFile));

@@ -7,7 +7,7 @@ namespace DotnetCombine.Options
 {
 
     [Verb("single-file", isDefault: false, HelpText = "Combines multiple source code files (.cs) into a single one.")]
-    public class CombineOptions : ICombineOptions
+    public class CombineOptions : IOutputFileOptions
     {
         [Value(0, MetaName = "input", Required = true, HelpText = @"
 Input path.")]

@@ -1,5 +1,7 @@
 # dotnet-combine
 
+# forked from eduherminio/dotnet-combine and downgrade .NET 6 to 5 SDK and one feature
+
 [![GitHub Actions][githubactionslogo]][githubactionslink]
 
 [![NuGet][nugetlogo]][nugetlink]
@@ -16,13 +18,7 @@
 
 ## Installing `dotnet-combine`
 
-.NET 6 SDK is required to use this tool. You can download it from [here](https://dotnet.microsoft.com/download/dotnet/6.0).
-
-The tool can be installed globally by running:
-
-`dotnet tool install -g dotnet-combine`
-
-More info about installing dotnet tools can be found [here](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools).
+This Fork downgrade .NET 6 SDK to 5 (for VS2019)
 
 Once installed, `dotnet-combine --help` should show you the general options:
 
@@ -66,6 +62,8 @@ Usage: dotnet-combine single-file <INPUT> [options]
 
   -p, --prefix       Prefix for the output file.
 
+  -P, --prefixWithParentFolder       Prefix with the folder name for the output file.
+
   -s, --suffix       Suffix for the output file
 
   -v, --verbose      (Default: false)
@@ -99,10 +97,10 @@ If you want that output file to have a specific name, you can also provide it:
 dotnet-combine single-file C:/MyAmazingProject --output C:/tmp/amazing.cs
 ```
 
-The option `--override` can be used in subsequent runs to replace that file:
+The option `--overwrite` can be used in subsequent runs to replace that file:
 
 ```bash
-dotnet-combine single-file C:/MyAmazingProject --override --output C:/tmp/amazing.cs
+dotnet-combine single-file C:/MyAmazingProject --overwrite --output C:/tmp/amazing.cs
 ```
 
 If you prefer to keep different versions of your output file, but would still like to identify them, you can use `--prefix` and/or `--suffix` together with your output dir in `--output`:
@@ -172,6 +170,8 @@ Usage: dotnet-combine zip <INPUT> [options]
 
   -p, --prefix       Prefix for the output file.
 
+  -P, --prefixWithParentFolder       Prefix with the folder name for the output file.
+
   -s, --suffix       Suffix for the output file.
 
   -v, --verbose      (Default: false)
@@ -202,7 +202,7 @@ If you want that output file to have a specific name, you can also provide it us
 dotnet-combine zip /home/ed/GeekyProject --extensions ".cpp;cxx:cc;.h;.hpp" --output /home/ed/GeekyProject/artifacts/src_v1`
 ```
 
-The tool will prevent you from generating another file with the same name unless you use `--override` (also abbreviated as `-f`):
+The tool will prevent you from generating another file with the same name unless you use `--overwrite` (also abbreviated as `-f`):
 
 ```bash
 dotnet-combine zip /home/ed/GeekyProject -f --extensions ".cpp;cxx:cc;.h;.hpp" --output /home/ed/GeekyProject/artifacts/src_v1

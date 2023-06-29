@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace DotnetCombine.Services
 {
 
-    public class Combiner : OutputFileManager
+    public class Combiner : OutputFileBase
     {
         public override string OutputExtension { get { return CSharpOutputExtension; } }
 

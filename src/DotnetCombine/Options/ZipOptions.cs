@@ -7,7 +7,7 @@ namespace DotnetCombine.Options
 {
 
     [Verb("zip", isDefault: false, HelpText = "Zips multiple files.")]
-    public class ZipOptions: ICombineOptions
+    public class ZipOptions: IOutputFileOptions
     {
         [Value(0, MetaName = "input", Required = true, HelpText = @"
 Input path (file or dir).")]

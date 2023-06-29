@@ -16,10 +16,10 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         [Theory]
         [InlineData("OutPutfilename")]
         [InlineData("OutPutfilename.cpp")]
-        [InlineData("OutPutfilename" + OutputFileManager.CSharpOutputExtension)]
+        [InlineData("OutPutfilename" + OutputFileBase.CSharpOutputExtension)]
         [InlineData(DefaultOutputDir + "/OutPutfilename")]
         [InlineData(DefaultOutputDir + "/nonexistingFolder/OutPutfilename")]
-        [InlineData(DefaultOutputDir + "/nonexistingFolder/OutPutfilename" + OutputFileManager.CSharpOutputExtension)]
+        [InlineData(DefaultOutputDir + "/nonexistingFolder/OutPutfilename" + OutputFileBase.CSharpOutputExtension)]
         public async Task OutPut(string output)
         {
             // Act
@@ -40,7 +40,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
                 : Path.GetDirectoryName(output)!;
             var existingFiles = Directory.GetFiles(path);
 
-            var zipFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == $"OutPutfilename{options.Suffix}" && Path.GetExtension(f) == OutputFileManager.CSharpOutputExtension);
+            var zipFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == $"OutPutfilename{options.Suffix}" && Path.GetExtension(f) == OutputFileBase.CSharpOutputExtension);
 
             Assert.Single(zipFiles);
         }
@@ -74,7 +74,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
             var csGeneratedFiles = existingFiles.Where(f =>
             {
                 var fileName = Path.GetFileNameWithoutExtension(f);
-                if (fileName.StartsWith(prefix) && Path.GetExtension(f) == OutputFileManager.CSharpOutputExtension)
+                if (fileName.StartsWith(prefix) && Path.GetExtension(f) == OutputFileBase.CSharpOutputExtension)
                 {
                     var trimmedFileName = fileName[prefix.Length..^options.Suffix.Length];
                     var fileDate = ParseDateTimeFromFileName(trimmedFileName);
@@ -89,7 +89,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
 
         [Theory]
         [InlineData(nameof(NoOutputDir_UsesInputDirAndOutputFileName), "")]
-        [InlineData(nameof(NoOutputDir_UsesInputDirAndOutputFileName), OutputFileManager.CSharpOutputExtension)]
+        [InlineData(nameof(NoOutputDir_UsesInputDirAndOutputFileName), OutputFileBase.CSharpOutputExtension)]
         public async Task NoOutputDir_UsesInputDirAndOutputFileName(string fileName, string extension)
         {
             // Act
@@ -107,14 +107,14 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
             Assert.Equal(0, exitCode);
             var existingFiles = Directory.GetFiles(InputDir);
 
-            var csGeneratedFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == fileName + options.Suffix && Path.GetExtension(f) == OutputFileManager.CSharpOutputExtension);
+            var csGeneratedFiles = existingFiles.Where(f => Path.GetFileNameWithoutExtension(f) == fileName + options.Suffix && Path.GetExtension(f) == OutputFileBase.CSharpOutputExtension);
 
             Assert.Single(csGeneratedFiles);
         }
 
         [Theory]
         [InlineData("", "")]
-        [InlineData("", OutputFileManager.CSharpOutputExtension)]
+        [InlineData("", OutputFileBase.CSharpOutputExtension)]
         public async Task NoOutputDir_UsesInputDirAndOutputFileNameWithPrefixWithParentFolder(string fileName, string extension)
         {
             // Act
@@ -134,7 +134,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
             // Assert
             Assert.Equal(0, exitCode);
             var existingFiles = Directory.GetFiles(InputDir);
-            var csGeneratedFiles = existingFiles.Where(f => Path.GetFileName(f) == obj.fileName && Path.GetExtension(f) == OutputFileManager.CSharpOutputExtension);
+            var csGeneratedFiles = existingFiles.Where(f => Path.GetFileName(f) == obj.fileName && Path.GetExtension(f) == OutputFileBase.CSharpOutputExtension);
             Assert.Single(csGeneratedFiles);
         }
 
@@ -162,7 +162,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
             var timeAfter = ParseDateTimeFromFileName(UniqueIdGenerator.UniqueId());
             var csGeneratedFiles = existingFiles.Where(f =>
             {
-                if (Path.GetExtension(f) == OutputFileManager.CSharpOutputExtension)
+                if (Path.GetExtension(f) == OutputFileBase.CSharpOutputExtension)
                 {
                     var fileDate = ParseDateTimeFromFileName(Path.GetFileNameWithoutExtension(f).Replace(options.Suffix, string.Empty));
                     return fileDate is not null && fileDate >= timeBefore && fileDate <= timeAfter;
@@ -177,7 +177,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         [Theory]
         [InlineData(DefaultOutputDir + "/OutputPrefix/")]
         [InlineData(DefaultOutputDir + "/OutputPrefix/filename")]
-        [InlineData(DefaultOutputDir + "/OutputPrefix/filename" + OutputFileManager.CSharpOutputExtension)]
+        [InlineData(DefaultOutputDir + "/OutputPrefix/filename" + OutputFileBase.CSharpOutputExtension)]
         public async Task OutputPrefix(string output)
         {
             // Arrange
@@ -202,7 +202,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
 
             var csGeneratedFiles = existingFiles.Where(f =>
                 Path.GetFileNameWithoutExtension(f).StartsWith(prefix)
-                && Path.GetExtension(f) == OutputFileManager.CSharpOutputExtension);
+                && Path.GetExtension(f) == OutputFileBase.CSharpOutputExtension);
 
             Assert.Single(csGeneratedFiles);
         }
@@ -210,7 +210,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         [Theory]
         [InlineData(DefaultOutputDir + "/OutputSuffix/")]
         [InlineData(DefaultOutputDir + "/OutputSuffix/filename")]
-        [InlineData(DefaultOutputDir + "/OutputSuffix/filename" + OutputFileManager.CSharpOutputExtension)]
+        [InlineData(DefaultOutputDir + "/OutputSuffix/filename" + OutputFileBase.CSharpOutputExtension)]
         public async Task OutputSuffix(string output)
         {
             // Arrange
@@ -236,7 +236,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
 
             var csGeneratedFiles = existingFiles.Where(f =>
                 Path.GetFileNameWithoutExtension(f).EndsWith(suffix)
-                && Path.GetExtension(f) == OutputFileManager.CSharpOutputExtension);
+                && Path.GetExtension(f) == OutputFileBase.CSharpOutputExtension);
 
             Assert.Single(csGeneratedFiles);
         }
@@ -244,7 +244,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         [Theory]
         [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/")]
         [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/filename")]
-        [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/filename" + OutputFileManager.CSharpOutputExtension)]
+        [InlineData(DefaultOutputDir + "/OutputPrefixSuffix/filename" + OutputFileBase.CSharpOutputExtension)]
         public async Task OutputPrefixSuffix(string output)
         {
             // Arrange
@@ -273,7 +273,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
             var csGeneratedFiles = existingFiles.Where(f =>
                 Path.GetFileNameWithoutExtension(f).StartsWith(prefix)
                 && Path.GetFileNameWithoutExtension(f).EndsWith(suffix)
-                && Path.GetExtension(f) == OutputFileManager.CSharpOutputExtension);
+                && Path.GetExtension(f) == OutputFileBase.CSharpOutputExtension);
 
             Assert.Single(csGeneratedFiles);
         }
@@ -298,7 +298,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
 
             var existingFiles = Directory.GetFiles(InputDir);
 
-            var zipFiles = existingFiles.Where(f => Path.GetExtension(f) == OutputFileManager.CSharpOutputExtension
+            var zipFiles = existingFiles.Where(f => Path.GetExtension(f) == OutputFileBase.CSharpOutputExtension
                                                 && Path.GetFileNameWithoutExtension(f).Contains(options.Suffix)
                                                 && Path.GetFileNameWithoutExtension(f).Contains(options.Prefix));
 

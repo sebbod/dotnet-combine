@@ -15,7 +15,7 @@ namespace DotnetCombine.Test.CompressorTests
         [InlineData("*.cs")]
         public void SupportedExtensionFormats(string extension)
         {
-            var outputPath = Path.Combine(DefaultOutputDir, nameof(SupportedExtensionFormats) + OutputFileManager.ZipOutputExtension);
+            var outputPath = Path.Combine(DefaultOutputDir, nameof(SupportedExtensionFormats) + OutputFileBase.ZipOutputExtension);
 
             // Act
             var options = new ZipOptions()

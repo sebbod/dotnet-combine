@@ -2,7 +2,7 @@
 
 namespace DotnetCombine.Options
 {
-    public interface ICombineOptions
+    public interface IOutputFileOptions
     {
         public string Input { get; set; }
 

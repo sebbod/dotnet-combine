@@ -14,7 +14,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         public async Task ExcludeFile()
         {
             // Arrange
-            var expectedOutputFile = Path.Combine(DefaultOutputDir, nameof(ExcludeFile)) + OutputFileManager.CSharpOutputExtension;
+            var expectedOutputFile = Path.Combine(DefaultOutputDir, nameof(ExcludeFile)) + OutputFileBase.CSharpOutputExtension;
             const string excludedFile = "TConverter.cs";
 
             // Act
@@ -43,7 +43,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         public async Task ExcludeDir()
         {
             // Arrange
-            var expectedOutputFile = Path.Combine(DefaultOutputDir, nameof(ExcludeDir)) + OutputFileManager.CSharpOutputExtension;
+            var expectedOutputFile = Path.Combine(DefaultOutputDir, nameof(ExcludeDir)) + OutputFileBase.CSharpOutputExtension;
             const string excludedDir = "Interfaces/";
 
             // Act
@@ -72,7 +72,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         public async Task ExcludeFileAndDir()
         {
             // Arrange
-            var expectedOutputFile = Path.Combine(DefaultOutputDir, nameof(ExcludeFileAndDir), nameof(ExcludeFileAndDir)) + OutputFileManager.CSharpOutputExtension;
+            var expectedOutputFile = Path.Combine(DefaultOutputDir, nameof(ExcludeFileAndDir), nameof(ExcludeFileAndDir)) + OutputFileBase.CSharpOutputExtension;
             var excludes = new[] { "TConverter.cs", "Interfaces/" };
 
             // Act
@@ -102,7 +102,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
         {
             // Arrange
             const string inputDir = "TestsInput/Combiner/GeneratedFilesExclusions/";
-            var expectedOutputFile = Path.Combine(DefaultOutputDir, nameof(GeneratedFileExclusions)) + OutputFileManager.CSharpOutputExtension;
+            var expectedOutputFile = Path.Combine(DefaultOutputDir, nameof(GeneratedFileExclusions)) + OutputFileBase.CSharpOutputExtension;
             var expectedOutputFileName = Path.GetFileName(expectedOutputFile);
 
             var pregeneratedOutputFile = Path.Combine(Path.Combine(inputDir, $"{nameof(GeneratedFileExclusions)}.cs"));
@@ -215,7 +215,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
             // Assert - Same content but first line, existing output file doesn't interfere
             Assert.Equal(0, exitCode);
 
-            var suffixFile = Directory.GetFiles(DefaultOutputDir, $"*-{nameof(GeneratedFileExclusions)}{OutputFileManager.CSharpOutputExtension}").Single();
+            var suffixFile = Directory.GetFiles(DefaultOutputDir, $"*-{nameof(GeneratedFileExclusions)}{OutputFileBase.CSharpOutputExtension}").Single();
             generatedOutputFileContent = await File.ReadAllLinesAsync(suffixFile);
             Assert.Equal(pregeneratedOutputFileLines.Length, generatedOutputFileContent.Length);
 
@@ -239,7 +239,7 @@ namespace DotnetCombine.Test.CombinerTests.OptionsTests
             // Assert - Same content but first line, existing output file doesn't interfere
             Assert.Equal(0, exitCode);
 
-            suffixFile = Directory.GetFiles(DefaultOutputDir, $"{nameof(GeneratedFileExclusions)}-*-{nameof(GeneratedFileExclusions)}{OutputFileManager.CSharpOutputExtension}").Single();
+            suffixFile = Directory.GetFiles(DefaultOutputDir, $"{nameof(GeneratedFileExclusions)}-*-{nameof(GeneratedFileExclusions)}{OutputFileBase.CSharpOutputExtension}").Single();
             generatedOutputFileContent = await File.ReadAllLinesAsync(suffixFile);
             Assert.Equal(pregeneratedOutputFileLines.Length, generatedOutputFileContent.Length);
 

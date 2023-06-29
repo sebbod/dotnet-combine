@@ -12,7 +12,7 @@ namespace DotnetCombine.Test.CompressorTests
         public void OverWrite_CreatesANewFile()
         {
             // Arrange - create a pre-existing 'output' file
-            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(OverWrite_CreatesANewFile)) + OutputFileManager.ZipOutputExtension;
+            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(OverWrite_CreatesANewFile)) + OutputFileBase.ZipOutputExtension;
             CreateZipFile(expectedZipFile);
             Assert.True(File.Exists(expectedZipFile));
 
@@ -40,7 +40,7 @@ namespace DotnetCombine.Test.CompressorTests
         public void NoOverwrite_ThrowsAnException()
         {
             // Arrange - create a pre-existing 'output' file
-            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(NoOverwrite_ThrowsAnException)) + OutputFileManager.ZipOutputExtension;
+            var expectedZipFile = Path.Combine(DefaultOutputDir, nameof(NoOverwrite_ThrowsAnException)) + OutputFileBase.ZipOutputExtension;
             CreateZipFile(expectedZipFile);
             Assert.True(File.Exists(expectedZipFile));
 

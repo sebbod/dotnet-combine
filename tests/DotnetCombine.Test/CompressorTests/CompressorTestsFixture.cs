@@ -21,7 +21,7 @@ namespace DotnetCombine.Test.CompressorTests
 
         protected static void CleanInputDir()
         {
-            foreach (var file in Directory.GetFiles(InputDir).Where(f => Path.GetExtension(f) == OutputFileManager.ZipOutputExtension))
+            foreach (var file in Directory.GetFiles(InputDir).Where(f => Path.GetExtension(f) == OutputFileBase.ZipOutputExtension))
             {
                 File.Delete(file);
             }
