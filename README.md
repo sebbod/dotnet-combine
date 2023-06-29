@@ -2,15 +2,6 @@
 
 # forked from eduherminio/dotnet-combine and downgrade .NET 6 to 5 SDK and one feature
 
-[![GitHub Actions][githubactionslogo]][githubactionslink]
-
-[![NuGet][nugetlogo]][nugetlink]
-
-[![Code coverage][coveragelogo]][coveragelink]
-[![Sonar vulnerabilities][sonarvulnerabilitieslogo]][sonarqubelink]
-[![Sonar bugs][sonarbugslogo]][sonarqubelink]
-[![Sonar code smells][sonarcodesmellslogo]][sonarqubelink]
-
 `dotnet-combine` is .NET global tool that allows you to:
 
 - Merge multiple C# source files (`.cs`) into a single one.
@@ -19,6 +10,8 @@
 ## Installing `dotnet-combine`
 
 This Fork downgrade .NET 6 SDK to 5 (for VS2019)
+
+build it with visual studio
 
 Once installed, `dotnet-combine --help` should show you the general options:
 
@@ -31,6 +24,10 @@ Once installed, `dotnet-combine --help` should show you the general options:
 
   version        Display version information.
 ```
+
+## `dotnet-combine sample to integrate in Visual studio`
+
+![alt text](https://github.com/sebbod/dotnet-combine/images/2023-06-29 15_54_43-DotnetCombineSolution.png?raw=true)
 
 ## `dotnet-combine single-file`
 

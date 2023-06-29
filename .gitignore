@@ -355,3 +355,4 @@ tmp/
 # Code coverage
 coveragereport/
 reportgeneratortool/
+/src/DotnetCombine/Folder4CG
