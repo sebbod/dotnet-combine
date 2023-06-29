@@ -27,7 +27,7 @@ Once installed, `dotnet-combine --help` should show you the general options:
 
 ## `dotnet-combine sample to integrate in Visual studio`
 
-![alt text](https://github.com/sebbod/dotnet-combine/images/2023-06-29 15_54_43-DotnetCombineSolution.png?raw=true)
+![alt text](https://github.com/sebbod/dotnet-combine/blob/20a041932c797f3331e7d56a2ccf4d6ac36f36a2/images/2023-06-29%2015_54_43-DotnetCombineSolution.png)
 
 ## `dotnet-combine single-file`
 
