@@ -27,6 +27,7 @@ Once installed, `dotnet-combine --help` should show you the general options:
 
 ## `dotnet-combine sample to integrate in Visual studio`
 [Sorry image in french]
+
 1 - you want to combine all files in Folder4CG
 
 ![alt text](https://github.com/sebbod/dotnet-combine/blob/20a041932c797f3331e7d56a2ccf4d6ac36f36a2/images/2023-06-29%2015_54_43-DotnetCombineSolution.png)
@@ -40,9 +41,13 @@ Once installed, `dotnet-combine --help` should show you the general options:
 ![alt text](https://github.com/sebbod/dotnet-combine/blob/4eddb85ba166efc0443bcacd019c8e212bd6bcf2/images/2023-06-29%2015_56_23-Outils%20externes.png)
 
 For this ^^ sample
+
 DotnetCombine
+
 D:\github\dotnet-combine\src\DotnetCombine\bin\Release\net5.0\dotnet-combine.exe
+
 single-file $(ItemPath) --overwrite --P --output combined.cs
+
 $(ItemDir)
 
 + check use output windows
