@@ -1,6 +1,8 @@
 # dotnet-combine
 
-# forked from eduherminio/dotnet-combine and downgrade .NET 6 to 5 SDK and one feature
+# 1-forked from eduherminio/dotnet-combine
+# 2-downgrade .NET 6 to 5 SDK 
+# 3-Add one feature
 
 `dotnet-combine` is .NET global tool that allows you to:
 
